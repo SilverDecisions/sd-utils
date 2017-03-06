@@ -325,4 +325,72 @@ export class Utils {
             message: e.message
         }
     }
+
+    //////////////////// Wrapped lodash methods:
+
+    static startsWith(){
+        return _.startsWith.apply(_, arguments)
+    }
+
+    static find(){
+        return _.find.apply(_, arguments)
+    }
+
+    static assign(){
+        return _.assign.apply(_, arguments)
+    }
+
+    static cloneDeep(){
+        return _.cloneDeep.apply(_, arguments)
+    }
+
+    static clone(){
+        return _.clone.apply(_, arguments)
+    }
+
+    static cloneDeepWith(){
+        return _.cloneDeepWith.apply(_, arguments)
+    }
+
+    static cloneWith(){
+        return _.cloneWith.apply(_, arguments)
+    }
+
+    static forOwn(){
+        return _.forOwn.apply(_, arguments)
+    }
+
+    static get(){
+        return _.get.apply(_, arguments)
+    }
+
+    static set(){
+        return _.set.apply(_, arguments)
+    }
+
+    static reduce(){
+        return _.reduce.apply(_, arguments)
+    }
+
+    static flatten(){
+        return _.flatten.apply(_, arguments)
+    }
+
+    static map(){
+        return _.map.apply(_, arguments)
+    }
+
+
+    static maxBy(){
+        return _.maxBy.apply(_, arguments)
+    }
+
+    static debounce(){
+        return _.debounce.apply(_, arguments)
+    }
+
+    static template(){
+        return _.template.apply(_, arguments)
+    }
+
 }
