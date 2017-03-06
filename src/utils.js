@@ -356,6 +356,10 @@ export class Utils {
         return _.cloneWith.apply(_, arguments)
     }
 
+    static mergeWith(){
+        return _.mergeWith.apply(_, arguments)
+    }
+
     static forOwn(){
         return _.forOwn.apply(_, arguments)
     }
