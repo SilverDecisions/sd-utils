@@ -389,6 +389,10 @@ export class Utils {
         return _.maxBy.apply(_, arguments)
     }
 
+    static minBy(){
+        return _.minBy.apply(_, arguments)
+    }
+
     static debounce(){
         return _.debounce.apply(_, arguments)
     }
