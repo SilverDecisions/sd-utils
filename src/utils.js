@@ -326,6 +326,16 @@ export class Utils {
         }
     }
 
+    static cartesianProductOf(arrays) {
+        return Utils.reduce(arrays, function (a, b) {
+            return Utils.flatten(Utils.map(a, function (x) {
+                return Utils.map(b, function (y) {
+                    return x.concat([y]);
+                });
+            }), true);
+        }, [[]]);
+    };
+
     //////////////////// Wrapped lodash methods:
 
     static startsWith(){
