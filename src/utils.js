@@ -336,6 +336,10 @@ export class Utils {
         }, [[]]);
     };
 
+    static indexesOf(array, value){
+        return array.reduce((a, e, i) => (e === value) ? a.concat(i) : a, [])
+    }
+
     //////////////////// Wrapped lodash methods:
 
     static startsWith(){
