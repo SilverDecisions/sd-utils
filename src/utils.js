@@ -141,7 +141,7 @@ export class Utils {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    static getObjectByIdMap(objectList, mappingFn) {
+    static getObjectByIdMap(objectList, mappingFn, idPropertyName='$id') {
         var objectById = {};
         if (!objectList) {
             return objectById;
@@ -151,7 +151,7 @@ export class Utils {
             if (mappingFn) {
                 val = mappingFn(obj);
             }
-            objectById[obj.$id] = val;
+            objectById[obj[idPropertyName]] = val;
         });
         return objectById;
     };
@@ -320,6 +320,9 @@ export class Utils {
     }
 
     static getErrorDTO(e){
+        if(!e) {
+            return e;
+        }
         return {
             name: e.constructor.name,
             message: e.message
