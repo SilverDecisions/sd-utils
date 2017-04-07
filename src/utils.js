@@ -189,13 +189,17 @@ export class Utils {
             return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
         }
 
-        /*var edge = ua.indexOf('Edge/');
-         if (edge > 0) {
-         // Edge (IE 12+) => return version number
-         return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
-         }*/
-
         // other browser
+        return false;
+    }
+
+    static detectEdge(){
+        var ua = window.navigator.userAgent;
+        var edge = ua.indexOf('Edge/');
+        if (edge > 0) {
+            // Edge (IE 12+) => return version number
+            return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+        }
         return false;
     }
 
@@ -351,6 +355,10 @@ export class Utils {
 
     static find(){
         return _.find.apply(_, arguments)
+    }
+
+    static fill(){
+        return _.fill.apply(_, arguments)
     }
 
     static assign(){
