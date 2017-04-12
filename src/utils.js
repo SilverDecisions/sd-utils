@@ -329,7 +329,8 @@ export class Utils {
         }
         return {
             name: e.constructor.name,
-            message: e.message
+            message: e.message,
+            data: e.data
         }
     }
 
