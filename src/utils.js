@@ -426,4 +426,8 @@ export class Utils {
         return _.template.apply(_, arguments)
     }
 
+    static round(){
+        return _.round.apply(_, arguments)
+    }
+
 }
