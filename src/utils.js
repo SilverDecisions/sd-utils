@@ -226,18 +226,25 @@ export class Utils {
     static stringify(obj, replacer, filteredPrefixes = ['$']){
         var cache = [];
         return JSON.stringify(obj, function (k, v) {
-            if (typeof v === 'object' && v !== null) {
-                if (cache.indexOf(v) !== -1) {
-                    // Circular reference found, discard key
-                    return;
-                }
-                cache.push(v);
+            if(v === Infinity){
+                return "Infinity"
+            }
+            if(v === -Infinity){
+                return "-Infinity"
             }
 
             if(filteredPrefixes){
                 if(filteredPrefixes.some(prefix=>_.startsWith(k, prefix))){
                     return undefined;
                 }
+            }
+
+            if (typeof v === 'object' && v !== null) {
+                if (cache.indexOf(v) !== -1) {
+                    // Circular reference found, discard key
+                    return;
+                }
+                cache.push(v);
             }
 
             if(replacer){
