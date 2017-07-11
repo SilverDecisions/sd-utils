@@ -361,6 +361,10 @@ export class Utils {
         return _.startsWith.apply(_, arguments)
     }
 
+    static isBoolean(){
+        return _.isBoolean.apply(_, arguments)
+    }
+
     static find(){
         return _.find.apply(_, arguments)
     }
