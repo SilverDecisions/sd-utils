@@ -1,6 +1,6 @@
 {
   "name": "sd-utils",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "SilverDecisions utils module",
   "main": "./index.js",
   "module": "index",
@@ -23,7 +23,26 @@
   "homepage": "https://github.com/SilverDecisions/sd-utils#readme",
   "browserify": {
     "transform": [
-      ["babelify", {"presets": ["es2015"],  "plugins": ["transform-class-properties", "transform-object-assign", ["babel-plugin-transform-builtin-extend", {"globals": ["Error"]}]]}]
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ],
+          "plugins": [
+            "transform-class-properties",
+            "transform-object-assign",
+            [
+              "babel-plugin-transform-builtin-extend",
+              {
+                "globals": [
+                  "Error"
+                ]
+              }
+            ]
+          ]
+        }
+      ]
     ]
   },
   "devDependencies": {
