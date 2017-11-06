@@ -442,4 +442,8 @@ export class Utils {
         return _.round.apply(_, arguments)
     }
 
+    static sortBy(){
+        return _.sortBy.apply(_, arguments)
+    }
+
 }
