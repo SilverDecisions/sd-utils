@@ -1,6 +1,6 @@
 {
   "name": "sd-utils",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "SilverDecisions utils module",
   "main": "./index.js",
   "module": "index",
