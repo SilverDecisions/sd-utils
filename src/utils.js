@@ -141,7 +141,7 @@ export class Utils {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    static getObjectByIdMap(objectList, mappingFn, idPropertyName='$id') {
+    static getObjectByIdMap(objectList, mappingFn, idPropertyName='id') {
         var objectById = {};
         if (!objectList) {
             return objectById;
@@ -367,6 +367,10 @@ export class Utils {
 
     static find(){
         return _.find.apply(_, arguments)
+    }
+
+    static findIndex(){
+        return _.findIndex.apply(_, arguments)
     }
 
     static fill(){
