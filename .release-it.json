@@ -3,8 +3,14 @@
   "increment": "patch",
   "preReleaseId": null,
   "buildCommand": "gulp",
+  "hooks": {
+    "after:bump": ["gulp"]
+  },
   "changelogCommand": "git log --pretty=format:\"* %s (%h)\" [REV_RANGE]",
   "npm": {
     "publish": true
+  },
+  "git": {
+    "requireCleanWorkingDir": false
   }
 }
