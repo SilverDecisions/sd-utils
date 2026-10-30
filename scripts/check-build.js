@@ -53,7 +53,7 @@ const NPM_CLI = [process.env.npm_execpath,
 
 function run(cmd, cmdArgs, opts) {
     const r = spawnSync(cmd, cmdArgs, Object.assign({encoding: 'utf8', maxBuffer: 64 * 1024 * 1024}, opts));
-    return {status: r.status, log: (r.stdout || '') + (r.stderr || '')};
+    return {status: r.status, stdout: r.stdout || '', log: (r.stdout || '') + (r.stderr || '')};
 }
 
 function npm(npmArgs, opts) {
@@ -107,7 +107,8 @@ function isES5(file) {
 }
 
 function runTests(dir, target) {
-    const r = run(process.execPath, ['--test', 'test/**/*.test.js'], {
+    // TAP: the default reporter of Node 24 prints no summary lines to parse
+    const r = run(process.execPath, ['--test', '--test-reporter=tap', 'test/**/*.test.js'], {
         cwd: dir, env: Object.assign({}, process.env, {[TARGET_ENV]: target})
     });
     const count = name => (r.log.match(new RegExp('^# ' + name + ' (\\d+)', 'm')) || [])[1];
@@ -216,7 +217,8 @@ function checkPackage(tmp, copy) {
         fail('npm pack exited with ' + r.status);
         return;
     }
-    const info = JSON.parse(r.log.slice(r.log.indexOf('[')))[0];
+    // stdout only: npm 11 writes warnings (e.g. gitignore-fallback) to stderr
+    const info = JSON.parse(r.stdout.slice(r.stdout.indexOf('[')))[0];
     const files = info.files.map(f => f.path);
     const missing = PACKED.filter(f => !files.includes(f));
     missing.length ? fail('tarball misses ' + missing.join(', ')) : ok('tarball ' + info.filename + ': ' + files.length + ' files, '
