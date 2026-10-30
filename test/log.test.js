@@ -54,11 +54,9 @@ test('log: loglevel root logger API', () => {
     assert.deepEqual(log.levels, {TRACE: 0, DEBUG: 1, INFO: 2, WARN: 3, ERROR: 4, SILENT: 5});
 });
 
-// dist/standalone of 0.1.15 exposed a copy of the loglevel namespace as Utils.log
-// (`import * as log`), whose methods did not follow setLevel().
-test('log: default level is WARN and setLevel gates the console methods', {
-    todo: loaded.standalone ? 'known bug: dist/standalone Utils.log ignores setLevel()' : false
-}, (t) => {
+// Regression: dist/standalone of 0.1.15 exposed a copy of the loglevel module
+// namespace as Utils.log (`import * as log`), whose methods ignored setLevel().
+test('log: default level is WARN and setLevel gates the console methods', (t) => {
     const initial = log.getLevel();
     t.after(() => log.setLevel(initial, false));
     assert.equal(initial, log.levels.WARN);
