@@ -292,7 +292,8 @@ test('compareVersionNumbers: NaN for parts that are not non-negative integers (p
     }
 });
 
-test('compareVersionNumbers compares parts numerically', {todo: 'known bug: parts are compared as strings, so 1.10.0 < 1.9.0'}, () => {
+// Regression: 0.1.15 compared the parts as strings, so 1.10.0 < 1.9.0.
+test('compareVersionNumbers compares parts numerically', () => {
     assert.equal(Utils.compareVersionNumbers('1.9.0', '1.10.0'), -1);
     assert.equal(Utils.compareVersionNumbers('1.10.0', '1.9.0'), 1);
     assert.equal(Utils.compareVersionNumbers('1.2.10', '1.2.9'), 1);

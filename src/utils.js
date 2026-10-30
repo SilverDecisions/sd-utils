@@ -285,10 +285,13 @@ export class Utils {
                 return 1;
             }
 
-            if (v1parts[i] === v2parts[i]) {
+            // parts are validated digit strings: compare them as numbers ('10' > '9')
+            var p1 = parseInt(v1parts[i], 10);
+            var p2 = parseInt(v2parts[i], 10);
+            if (p1 === p2) {
                 continue;
             }
-            if (v1parts[i] > v2parts[i]) {
+            if (p1 > p2) {
                 return 1;
             }
             return -1;
