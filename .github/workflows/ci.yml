@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [master, 'modernize/**']
+    branches: [master, modernize]
   pull_request:
   workflow_dispatch:
 
@@ -65,11 +65,13 @@ jobs:
         timeout-minutes: 5
         run: npm run build
 
-      - name: Tests on the fresh dist (standalone and module bundles)
+      - name: Tests on the fresh dist (standalone and module bundles, plain and minified)
         shell: bash
         run: |
           SD_UTILS_TARGET=standalone npm test
+          SD_UTILS_TARGET=standalone.min npm test
           SD_UTILS_TARGET=module npm test
+          SD_UTILS_TARGET=module.min npm test
 
       - name: The build changed nothing outside dist/
         shell: bash
