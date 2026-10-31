@@ -34,19 +34,20 @@ npm test             # node:test contract tests against dist/ (run the build fir
 npm run test:build   # isolated build check, see scripts/check-build.js
 ```
 
-`npm test` tests `dist/standalone/sd-utils.js` by default;
-`SD_UTILS_TARGET=module npm test` tests `dist/sd-utils.js`, and
-`SD_UTILS_TARGET=<file>` any CommonJS file exporting the module (used for a
-browserify bundle of the packed package). `SD_UTILS_DIST` points at another
-`dist/` directory.
+`npm test` tests `dist/standalone/sd-utils.js` by default. `SD_UTILS_TARGET`
+selects another bundle: `module` (`dist/sd-utils.js`), `standalone.min` and
+`module.min` (the minified files), or a CommonJS file exporting the module
+(used for a browserify bundle of the packed package). `SD_UTILS_DIST` points
+at another `dist/` directory.
 
 `npm run test:build` (CI on Linux) copies the working tree, runs `npm ci` and
-the build, checks the six artifacts (ES5, source maps) and that nothing
-outside `dist/` changed, runs the tests against both bundles, packs the
-package, installs the tarball into an empty consumer that bundles it with
-browserify + babelify like SilverDecisions and tests that bundle, and checks
-that a syntax error fails the build with a non-zero exit code. Windows CI runs
-a smoke build, the tests and the check without the consumer install.
+the build, checks the six artifacts (ES5, parsed source maps) and that nothing
+outside `dist/` changed, runs the tests against the four bundles (plain and
+minified), packs the package, installs the tarball into an empty consumer that
+bundles it with browserify + babelify like SilverDecisions and tests that
+bundle, and checks that a syntax error fails the build with a non-zero exit
+code. Windows CI runs a smoke build, the tests on the four bundles and the
+check without the consumer install.
 
 `dist/` is committed and rebuilt by the release (`release-it` runs
 `npm run build` after the version bump). Until then it is the build of the

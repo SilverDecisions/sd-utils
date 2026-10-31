@@ -4,6 +4,7 @@
 //   standalone  dist/standalone/sd-utils.js, UMD (CommonJS branch), exports Utils with Utils.log
 //   module      dist/sd-utils.js, the bundle that defines a global `require`
 //               exposing 'sd-utils' (loaded by the dist bundles of sd-model etc.)
+//   standalone.min, module.min   the minified files of the same bundles
 //   <file>      a CommonJS file exporting the module namespace, e.g. a Browserify
 //               bundle of the installed package (scripts/check-build.js)
 // SD_UTILS_DIST points at another dist/ directory (default: ./dist).
@@ -31,12 +32,14 @@ function loadModuleBundle(file) {
 }
 
 function load() {
-    if (target === 'standalone') {
-        const Utils = require(path.join(dist, 'standalone', 'sd-utils.js'));
+    const bundle = /^(standalone|module)(\.min)?$/.exec(target);
+    const file = bundle && (bundle[1] === 'standalone' ? 'standalone/sd-utils' : 'sd-utils') + (bundle[2] || '') + '.js';
+    if (bundle && bundle[1] === 'standalone') {
+        const Utils = require(path.join(dist, file));
         return {target, Utils, log: Utils.log, namespace: null, standalone: Utils};
     }
-    const namespace = target === 'module'
-        ? loadModuleBundle(path.join(dist, 'sd-utils.js'))
+    const namespace = bundle
+        ? loadModuleBundle(path.join(dist, file))
         : require(path.resolve(target));
     return {target, Utils: namespace.Utils, log: namespace.log, namespace, standalone: null};
 }

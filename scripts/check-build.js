@@ -3,9 +3,11 @@
 //
 //  1. copy the files of the working tree (git ls-files) to a temp dir, `npm ci` there
 //  2. `npm run build`: exit code 0, no Rollup warnings
-//  3. all dist artifacts exist, are ES5 and have their source maps
+//  3. all dist artifacts exist and are ES5; their source maps (inline in the plain
+//     files, .map files for the minified ones) parse and map to the sources
 //  4. the build changed nothing outside dist/
-//  5. the tests against both fresh bundles (dist/standalone and dist/<name>.js)
+//  5. the tests against the four fresh bundles (dist/standalone and dist/<name>.js,
+//     plain and minified)
 //  6. a syntax error injected into the sources fails `npm run build` with a
 //     non-zero exit code and a diagnostic naming the file, nothing outside dist/ changes
 //  7. `npm pack`: the tarball contains the entry points, sources and dist; it is
@@ -96,14 +98,46 @@ function copyTree(dest) {
     return files.length;
 }
 
+// acorn from the isolated copy (installed by its `npm ci`)
+let toolsDir = root;
 function isES5(file) {
-    const acorn = require(require.resolve('acorn', {paths: [root]}));
+    const acorn = require(require.resolve('acorn', {paths: [toolsDir]}));
     try {
         acorn.parse(fs.readFileSync(file, 'utf8'), {ecmaVersion: 5});
         return null;
     } catch (e) {
         return e.message;
     }
+}
+
+// null if the file references a parsable source map (inline data: URL for the
+// plain files, a .map file next to the minified ones) that maps to ERROR_FILE
+function sourceMapProblem(file, minified) {
+    const ref = /\/\/# sourceMappingURL=(\S+)\s*$/.exec(fs.readFileSync(file, 'utf8'));
+    if (!ref) {
+        return 'no sourceMappingURL comment at the end';
+    }
+    const inline = /^data:application\/json;(?:charset=utf-8;)?base64,/.exec(ref[1]);
+    if (minified ? inline || ref[1] !== path.basename(file) + '.map' : !inline) {
+        return 'expected ' + (minified ? 'a reference to ' + path.basename(file) + '.map' : 'an inline source map') + ', got ' + ref[1].slice(0, 40);
+    }
+    let map;
+    try {
+        map = JSON.parse(inline ? Buffer.from(ref[1].slice(inline[0].length), 'base64').toString('utf8')
+            : fs.readFileSync(path.join(path.dirname(file), ref[1]), 'utf8'));
+    } catch (e) {
+        return 'source map is not readable JSON: ' + e.message;
+    }
+    if (map.version !== 3 || typeof map.mappings !== 'string' || !/[A-Za-z]/.test(map.mappings)) {
+        return 'source map has no version 3 mappings';
+    }
+    if (!Array.isArray(map.sources) || !map.sources.some(s => s.split('\\').join('/').endsWith(ERROR_FILE))) {
+        return 'source map does not list ' + ERROR_FILE;
+    }
+    if (map.sourcesContent && map.sourcesContent.length !== map.sources.length) {
+        return 'source map sourcesContent does not match its sources';
+    }
+    return null;
 }
 
 function runTests(dir, target) {
@@ -135,6 +169,7 @@ function main() {
             return;
         }
         ok('npm ci');
+        toolsDir = copy;
 
         // 2
         const before = hashTree(copy, ['node_modules', 'dist']);
@@ -157,24 +192,24 @@ function main() {
             if (a.endsWith('.js')) {
                 const err = isES5(f);
                 err ? fail(a + ' is not ES5: ' + err) : null;
-                const code = fs.readFileSync(f, 'utf8');
-                const map = a.endsWith('.min.js') ? path.basename(a) + '.map' : 'data:application/json';
-                code.includes('//# sourceMappingURL=' + map) ? null : fail(a + ': no source map reference to ' + map);
+                const problem = sourceMapProblem(f, a.endsWith('.min.js'));
+                problem ? fail(a + ': ' + problem) : null;
             }
         }
         const extra = fs.readdirSync(path.join(copy, 'dist'), {recursive: true})
             .map(f => 'dist/' + String(f).split(path.sep).join('/'))
             .filter(f => fs.statSync(path.join(copy, f)).isFile() && !ARTIFACTS.includes(f));
         extra.length ? fail('unexpected files in dist/: ' + extra.join(', ')) : null;
-        ok(ARTIFACTS.length + ' artifacts checked (ES5, source maps)');
+        ok(ARTIFACTS.length + ' artifacts checked (ES5, source maps parsed)');
 
         // 4
         const changed = changedOutsideDist(copy, before);
         changed.length ? fail('build changed files outside dist/: ' + changed.join(', ')) : ok('nothing changed outside dist/');
 
         // 5
-        runTests(copy, 'standalone');
-        runTests(copy, 'module');
+        for (const target of ['standalone', 'standalone.min', 'module', 'module.min']) {
+            runTests(copy, target);
+        }
 
         // 7 (before 6, which breaks the sources of its own copy)
         if (!args.has('--skip-consumer')) {
