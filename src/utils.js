@@ -285,16 +285,17 @@ export class Utils {
                 return 1;
             }
 
-            // parts are validated digit strings: compare them as numbers ('10' > '9')
-            var p1 = parseInt(v1parts[i], 10);
-            var p2 = parseInt(v2parts[i], 10);
+            // parts are validated digit strings: compare them as numbers ('10' > '9'),
+            // by length and digits without leading zeros, so long parts keep their precision
+            var p1 = v1parts[i].replace(/^0+(?=\d)/, '');
+            var p2 = v2parts[i].replace(/^0+(?=\d)/, '');
             if (p1 === p2) {
                 continue;
             }
-            if (p1 > p2) {
-                return 1;
+            if (p1.length !== p2.length) {
+                return p1.length > p2.length ? 1 : -1;
             }
-            return -1;
+            return p1 > p2 ? 1 : -1;
         }
 
         if (v1parts.length != v2parts.length) {

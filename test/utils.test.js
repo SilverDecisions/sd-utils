@@ -299,6 +299,12 @@ test('compareVersionNumbers compares parts numerically', () => {
     assert.equal(Utils.compareVersionNumbers('1.2.10', '1.2.9'), 1);
     assert.equal(Utils.compareVersionNumbers('9.0.0', '10.0.0'), -1);
     assert.equal(Utils.compareVersionNumbers('1.02.0', '1.2.0'), 0);
+    assert.equal(Utils.compareVersionNumbers('1.0010.0', '1.10.0'), 0);
+    assert.equal(Utils.compareVersionNumbers('1.00.0', '1.0.0'), 0);
+    assert.equal(Utils.compareVersionNumbers('1.009.0', '1.10.0'), -1);
+    // parts beyond Number precision (2^53 and 2^53 + 1)
+    assert.equal(Utils.compareVersionNumbers('9007199254740992.0.0', '9007199254740993.0.0'), -1);
+    assert.equal(Utils.compareVersionNumbers('1.99999999999999999999.0', '1.100000000000000000000.0'), -1);
 });
 
 test('makeIterator', () => {
