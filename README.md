@@ -40,6 +40,12 @@ selects another bundle: `module` (`dist/sd-utils.js`), `standalone.min` and
 (used for a browserify bundle of the packed package). `SD_UTILS_DIST` points
 at another `dist/` directory.
 
+For the `module` targets `test/bundle-isolation.test.js` loads the module bundle as a script into a fresh
+global scope and checks that it adds only `require`, keeps its exports and
+cache when another `require` bundle is loaded after it, passes other names
+along the `require` chain (`MODULE_NOT_FOUND` for unknown ones) and evaluates
+the module on the first `require`.
+
 `npm run test:build` (CI on Linux) copies the working tree, runs `npm ci` and
 the build, checks the six artifacts (ES5, parsed source maps) and that nothing
 outside `dist/` changed, runs the tests against the four bundles (plain and

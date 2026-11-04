@@ -20,6 +20,15 @@ committed `dist/` is still the `0.1.15` build.
 
 ### Dependencies and build
 
+- The minified module bundle `dist/sd-utils.min.js` keeps the state of its
+  `require` wrapper (module cache, factories, previous `require`) in its own
+  closure: `@rollup/plugin-terser` defaults to `toplevel: true` for the cjs
+  output and turned the wrapper into global variables, so two minified module
+  bundles in one scope overwrote each other (`Maximum call stack size
+  exceeded`, `r is not a function`). Terser now runs with `toplevel: false`;
+  the plain and standalone files are unchanged.
+  `test/bundle-isolation.test.js` checks the globals, the cache and the
+  `require` chain of the module bundle.
 - `lodash` `^4.18.1` (security fixes only: prototype pollution in
   `_.unset`/`_.omit`, `_.template` imports validation); `loglevel` stays
   `^1.7.1` (the bundles contain 1.9.2).
